@@ -1,0 +1,72 @@
+import requests
+import json
+import threading
+import tkinter as tk
+from tkinter import messagebox
+
+def load_config():
+    try:
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        config = {}
+    return config
+
+def save_config(config):
+    with open('config.json', 'w') as f:
+        json.dump(config, f, indent=4)
+
+def send_request(webhook, message):
+    response = requests.post(webhook, json={"content": message})
+    print(response.status_code)
+
+def start_threads():
+    config = load_config()
+    threads = []
+    for _ in range(int(config.get('times')) * 2): # Multiply 'times' by 2
+        t = threading.Thread(target=send_request, args=(config.get('webhook'), config.get('message')))
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
+
+def main():
+    root = tk.Tk()
+    root.title('EasyWebhookSpammer') # Changed window title
+    root.geometry('400x300')
+
+    config = load_config()
+
+    webhook_label = tk.Label(root, text="Webhook:")
+    webhook_entry = tk.Entry(root)
+    webhook_label.pack()
+    webhook_entry.pack()
+
+    message_label = tk.Label(root, text="Message:")
+    message_entry = tk.Entry(root)
+    message_label.pack()
+    message_entry.pack()
+
+    times_label = tk.Label(root, text="Times:")
+    times_entry = tk.Entry(root)
+    times_label.pack()
+    times_entry.pack()
+
+    def submit():
+        webhook = webhook_entry.get() or config.get('webhook')
+        message = message_entry.get() or config.get('message')
+        times = times_entry.get() or config.get('times')
+        config['webhook'] = webhook
+        config['message'] = message
+        config['times'] = times
+        save_config(config)
+        start_threads()
+
+    submit_button = tk.Button(root, text='Submit', command=submit)
+    submit_button.pack()
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
