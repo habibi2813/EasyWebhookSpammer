@@ -3,7 +3,7 @@
 
 ## Goals for this project
 * Make it remember your options ✅
-* Create a GUI with PySimpleGui package ❌
+* Create a GUI with Tkinter package ❌
 * Try to make it even faster ❌
 * Make use of it in bigger and better projects ❌
 
