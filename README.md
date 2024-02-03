@@ -9,7 +9,7 @@
 
 ## Requirements
 ```sh
-pip install requests json threading
+pip install requests json threading tkinter
 ```
 ## Thanks for using this tool
 If you used this tool to troll someone or something, then i would appreciate if you wuold star this project,
